@@ -1,0 +1,27 @@
+The FeedbackKit was created and designed to be able to better communicate with your users without being invasive and using push notifications. Inspired by the Doodle Jump news bar notification system at the bottom.
+
+It takes a standard RSS feed that you can create in Feeder and parses it taking the title of the article and the summary and will push this information to didReceiveNews: (NSString *)description withTitle: (NSString *)title; Out of courtesy for new users it will not call didReceiveNews for news older than when the user installed the app. You can implement didFailToReceiveNews: (NSError *)error; in addition to handle the error. Just use the <FeedbackKitDelegate> in your header.
+
+Example usage:
+
+- (void)didReceiveNews:(NSString *)description withTitle:(NSString *)title {
+	UIAlertView *alert = [[UIAlertView alloc]
+						  initWithTitle: title
+						  message: description
+						  delegate: nil
+						  cancelButtonTitle:@"OK"
+						  otherButtonTitles:nil];
+	[alert show];
+	[alert release];
+}
+
+- (void)didFailToReceiveNews:(NSError *)error {
+	NSLog(@"Failed to receive news");
+}
+
+- (void)viewDidLoad {
+	[super viewDidLoad];
+	FeedbackKit *feedback = [[FeedbackKit alloc] init];
+	[feedback setDelegate:self];
+	[feedback requestNews:@"http://example.com/news.xml"];
+}
